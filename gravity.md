@@ -186,9 +186,14 @@ As you can see, this map of Earth's surface strongly resembles the interrupted m
 
 The meridian chosen to be uninterrupted is completely arbitrary.  Here is a movie showing all the possible choices of uninterrupted meridian in succession, as if the globe were spinning.  Of course, all that is really changing is the map projection - every frame is a view of the same thing, just arranged differently on the page.
 
-<video src="./fig_polyspin.mp4" loop muted controls>Video not supported in this markdown viewer.</video>
+<video src="./fig_polyspin.mp4" loop muted controls>
+Video not supported in this viewer, here are three frames:<p>
+<img src="fig_polycone1710.png" alt="frame 1", width="30%"/>
+<img src="fig_polycone.png" alt="frame 2", width="30%"/>
+<img src="fig_polycone720.png" alt="frame 3", width="30%"/></p>
+</video>
 
-From Einstein's perspective, by leaving out the interruptions Newton has inevitably distorted spacetime, in the same way that you must inevitably distort a world map by drawing it on a flat surface without interruptions.
+From Einstein's perspective, by leaving out the interruptions Newton has inevitably distorted spacetime, in the same way that you must inevitably distort a world map by drawing it on a flat surface without interruptions.  However, unlike the world map, you can argue about whether it is Newton's or Einstein's spacetime map which is distorted - the question boils down to whether you require a global inertial frame or permit local inertial frames where you will apply the First Law.  Everyone admits that only relative velocity is meaningful; the question is whether you picture acceleration to be absolute or only relative.  Perhaps it is best to say that either picture is distorted relative to the other.
 
 
 Local formulation of inverse square law
