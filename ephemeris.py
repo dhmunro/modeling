@@ -60,7 +60,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from datetime import datetime, timezone
 from numbers import Number
 
-from numpy import array, asarray, polyval, pi, sin, cos, sqrt
+from numpy import (array, asarray, polyval, pi, sin, cos, sqrt, concatenate,
+                   arange)
 
 __all__ = ["ephemeris", "JulianDate", "DateTime", "jd2t"]
 
@@ -230,7 +231,7 @@ class Ephemerides(object):
             else:
                 aux_names = [aux_names[i] for i in iaux]
                 aux = aux[:, iaux]
-            aux_list = [planets.index(nm) for nm in aux_names]
+            aux_list = [planets.index(nm) for nm in aux_names if nm in planets]
         current = planets, values, rates, aux, aux_list, jdmin, jdmax
         if not temp:
             self.current = current
@@ -297,8 +298,47 @@ class Ephemerides(object):
         # Final result is a*xyz, but some code wants them separately.
         return xyz, a, e, ee, see, ma, aper, nlon
 
+    def one_orbit(self, t=0., model=None, npts=361):
+        """Compute one orbit of all the planets in the model (default current).
+
+        Parameters
+        ----------
+        t : float
+            time in centuries past J2000.0 of the orbital elements used to
+            compute a closed orbital path
+        model : tuple
+            Override the current model by a return value from set_model().
+        npts : int
+            number of points around orbit (default 361).
+
+        Returns
+        -------
+        xyz : ndarray shape(3, nplanets, npts)
+            npts positions around the orbit of each planet  The first and last
+            points will be identical.
+        t : ndarray shape(nplanets, npts)
+            times corresponding to xyz, in Julian centuries past J2000.0
+        """
+        t0 = asarray(t, float).reshape(())
+        if model is None:
+            model = self.current
+        # planets, values, rates, aux, aux_list, jdmin, jdmax = model
+        planets, periods = model[0], 2. * pi / model[2][3]
+        frac = arange(npts) / (npts - 1.)  # fraction of orbit
+        xyz, t = [], []
+        for p, tmax in zip(planets, periods):
+            t1 = t0 + tmax * frac  # npts equal time steps over one period
+            xyz1, a1 = self.orbit(t1, self.set_model(None, (p,), 1))[:2]
+            t.append(t1)
+            xyz.append(a1 * xyz1)
+        return concatenate(xyz, 1), array(t)
+
     def sun(self, t, name=None):
         """Compute position of Sun relative to SSB at times t.
+
+        The Sun is always near (0, 0, 0), but this point is actually the SSB.
+        This uses the masses of all the planets in their positions at
+        time(s) t to compute the Sun's position relative to the SSB.
 
         Parameters
         ----------
